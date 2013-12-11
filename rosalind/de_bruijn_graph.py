@@ -1,0 +1,44 @@
+
+myFilename = "/Users/siakhnin/Downloads/dataset_53_6 (2).txt"
+
+f = open(myFilename, 'r')
+inputstr = f.read()
+
+'''
+inputstr =  """4
+     AAGATTCTCTAC"""
+inputstr = """10
+CGCTTCTACACTGGCTTGAAATCCCAAGCACCATACGTCTTCTGTAACGCATGTGGAGTACGGGCCCATTGCTTGCATAGACGGGGCATTCCTGTAGCTATCACACAATCTCATCGACAATCGCGGCTGACAAGATGTAAGAATTTCAACGAATTACTTTGACAACATTACATTCTCCACCAGTGACGCACTGAGTCCACGAGGAAGATGAGTATAAATAGAGGCGTACGATCTAGAGCATAGGTTGCCTCCATCGAAGGCGCGGTGCACAGTATCTAGGTAGACCTTTCACGCGTAGCAGAGTGAGATGTTAAGATGTGGTAGATACCAGTGCCGCGCACACCCCTTCAAAGTCAATACGAATTGTATCTAGAAACAAGCACACAAGTCACTGCCGCGTGCGCTTGATGAGGTGGTGATCTTGCTAGTTAAGTGCGGTAAGTCAGCTATTTCTAGCCCGTTCAACGTCTATATCAGGTGGGGAATACCCAGTTAAAGATTGAAGGTTAGGCTAGGCGTAGTGCGCGTAGACCCGTAGATCGCTGTCTACTCCCTTACGCGGAATAAATCCTTCGTCCGGCGAGTGCTGCAATTCCATTGTCCTCATCGCAGACGGAACAGTCCAGAGCGATACTTTGGTACCTTGATTGCATTAATCCGTCGATTGGACCTGAGATTGAATAGGCCGATGGTCATACGGTCGTACCAGTACGAGGACTGGGTGCCCCAGCTTGAATGAGGATGCGGATGAACTCTTACCTACGCATGGTGATCTAGGCCGTATGTTTGCGGCCCCCCGGGCGGACAGCTCACCTAGCACAAACGAGTGGGCTTGGTTTTTCTCCGCAGCACGCACTGCATAGGGGGGTTCATAGAAGGAGCAATAAC"""
+'''
+inputlist = [x.strip() for x in inputstr.split("\n")]
+k = int(inputlist[0])
+dna_string = inputlist[1]
+
+
+def generateReads(dna_string, k):
+    reads = []
+    for ind in range(len(dna_string) - k + 1):
+        reads.append(dna_string[ind:ind+k])
+    return reads
+
+dna_reads = generateReads(dna_string,k)
+
+def generateGraph(dna_reads):
+    graph = {}
+    for kmer in dna_reads:
+        graph.setdefault((kmer[:-1]),[]).append(kmer[1:])
+
+    return graph
+
+graph = generateGraph(dna_reads)
+
+def prepareForOutput(graph):
+    ans_list = []
+    for key in graph:
+        if key != "":
+            ans_list.append(key + " -> " + ",".join(sorted(graph[key])))
+    return sorted(ans_list)
+
+
+f = open('de_bruijn_graph.out', 'w')
+f.write("\n".join(prepareForOutput(graph)))
